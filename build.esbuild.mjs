@@ -16,6 +16,7 @@ const buildOpts = {
 	outfile: devMode ? 'trigonofy.js' : 'trigonofy.min.js',
 	minify: !devMode,
 	bundle: true,
+	watch: devMode && !serveMode,
 	sourcemap: devMode,
 	treeShaking: true,
 };
