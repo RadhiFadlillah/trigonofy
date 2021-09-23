@@ -1,0 +1,21 @@
+{
+	"name": "trigonofy",
+	"version": "0.0.1",
+	"author": "Radhi Fadlillah",
+	"license": "MIT",
+	"description": "Library to generate colorful triangular background image",
+	"main": "trigonofy.js",
+	"keywords": [
+		"lowpoly",
+		"triangle",
+		"art"
+	],
+	"devDependencies": {
+		"esbuild": "^0.13.2"
+	},
+	"scripts": {
+		"prod": "node build.esbuild.mjs",
+		"dev": "node build.esbuild.mjs dev",
+		"serve": "node build.esbuild.mjs dev serve"
+	}
+}
