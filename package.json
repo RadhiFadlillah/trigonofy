@@ -11,6 +11,8 @@
 		"art"
 	],
 	"devDependencies": {
+		"@types/chroma-js": "^2.1.3",
+		"chroma-js": "^2.1.2",
 		"esbuild": "^0.13.2"
 	},
 	"scripts": {

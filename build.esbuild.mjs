@@ -19,6 +19,7 @@ const buildOpts = {
 	watch: devMode && !serveMode,
 	sourcemap: devMode,
 	treeShaking: true,
+	globalName: 'Trigonofy',
 };
 
 // Run esbuild
