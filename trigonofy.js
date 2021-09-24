@@ -2787,6 +2787,7 @@ var Trigonofy = (() => {
     PaletteType2[PaletteType2["Analogous"] = 3] = "Analogous";
     PaletteType2[PaletteType2["Triadic"] = 4] = "Triadic";
     PaletteType2[PaletteType2["Tetradic"] = 5] = "Tetradic";
+    PaletteType2[PaletteType2["ColorBrewer"] = 6] = "ColorBrewer";
   })(PaletteType || (PaletteType = {}));
   function generatePalette(base, type) {
     switch (type) {
@@ -2800,6 +2801,8 @@ var Trigonofy = (() => {
         return triadicPalette(base);
       case 5:
         return tetradicPalette(base);
+      case 6:
+        return colorBrewerPalette();
       default:
         return chaosPalette(base);
     }
@@ -2851,6 +2854,11 @@ var Trigonofy = (() => {
     let paletteSize = randomInt(4, 10);
     return import_chroma_js.default.scale([base, accent1, accent2, accent3]).mode("lch").colors(paletteSize);
   }
+  function colorBrewerPalette() {
+    let keys = Object.keys(import_chroma_js.default.brewer);
+    const idx = Math.floor(Math.random() * keys.length);
+    return import_chroma_js.default.brewer[keys[idx]];
+  }
 
   // src/index.ts
   var GradientType;
@@ -2870,7 +2878,10 @@ var Trigonofy = (() => {
       this.triangleHeight = opts.triangleHeight || 75;
       this.triangleVariance = opts.variance || 0.75;
       this.baseColor = import_chroma_js2.default.valid(opts.baseColor) ? (0, import_chroma_js2.default)(opts.baseColor) : import_chroma_js2.default.random();
-      let paletteType = opts.paletteType in PaletteType ? opts.paletteType : randomEnum(PaletteType);
+      let paletteType = opts.paletteType;
+      if (!(paletteType in PaletteType)) {
+        paletteType = randomEnum(PaletteType);
+      }
       this.palette = generatePalette(this.baseColor, paletteType);
       console.log(this.palette);
       this.palette.forEach((hex) => {

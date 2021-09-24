@@ -46,13 +46,12 @@ export class Pattern {
 			: chroma.random();
 
 		// Generate palette
-		let paletteType =
-			opts.paletteType in PaletteType
-				? opts.paletteType
-				: randomEnum(PaletteType);
+		let paletteType = opts.paletteType;
+		if (!(paletteType in PaletteType)) {
+			paletteType = randomEnum(PaletteType);
+		}
 
 		this.palette = generatePalette(this.baseColor, paletteType);
-
 		console.log(this.palette);
 
 		this.palette.forEach((hex) => {

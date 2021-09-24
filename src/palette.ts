@@ -8,6 +8,7 @@ export enum PaletteType {
 	Analogous,
 	Triadic,
 	Tetradic,
+	ColorBrewer,
 }
 
 export function generatePalette(
@@ -25,6 +26,8 @@ export function generatePalette(
 			return triadicPalette(base);
 		case PaletteType.Tetradic:
 			return tetradicPalette(base);
+		case PaletteType.ColorBrewer:
+			return colorBrewerPalette();
 		default:
 			return chaosPalette(base);
 	}
@@ -91,4 +94,10 @@ function tetradicPalette(base: chroma.Color): string[] {
 		.scale([base, accent1, accent2, accent3])
 		.mode('lch')
 		.colors(paletteSize);
+}
+
+function colorBrewerPalette(): string[] {
+	let keys = Object.keys(chroma.brewer);
+	const idx = Math.floor(Math.random() * keys.length);
+	return chroma.brewer[keys[idx]];
 }
