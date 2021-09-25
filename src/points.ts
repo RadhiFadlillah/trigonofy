@@ -73,7 +73,7 @@ export class Points {
 
 function randomCellSize(width: number, height: number): number {
 	const limit = Math.min(width, height);
-	let minSize = Math.min(limit, 10);
+	let minSize = Math.min(limit, 20);
 	let maxSize = Math.floor(limit / 5);
 	return randomInt(minSize, maxSize);
 }

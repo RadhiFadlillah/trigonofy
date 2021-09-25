@@ -7,6 +7,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Trigonofy Sample</title>
 	<style>
+		* {
+			border: 0;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
 		body {
 			display: flex;
 			flex-flow: row wrap;
@@ -19,7 +26,10 @@
 	<script type="module">
 		import Trigonofy from '/trigonofy.js'
 
-		Trigonofy()
+		Trigonofy({
+			width: window.innerWidth,
+			height: window.innerHeight,
+		})
 	</script>
 </body>
 
