@@ -15,14 +15,22 @@ const buildOptions = {
 	bundle: true,
 	sourcemap: true,
 	treeShaking: true,
-	globalName: 'trigonofy',
+	format: 'esm',
+	globalName: 'Trigonofy',
 	outfile: 'trigonofy.js',
 	entryPoints: ['./src/index.ts'],
 };
 
 const devBuildOptions = {
 	...buildOptions,
-	watch: !serveMode,
+	watch: serveMode !== true,
+};
+
+const devUnbundledBuildOptions = {
+	...devBuildOptions,
+	sourcemap: false,
+	outfile: 'trigonofy-unbundled.js',
+	external: ['chroma-js', 'd3-delaunay'],
 };
 
 const bundleProdBuildOptions = {
@@ -42,6 +50,7 @@ const prodBuildOptions = {
 if (serveMode) {
 	serve(serveOptions, buildOptions);
 } else if (devMode) {
+	build(devUnbundledBuildOptions);
 	build(devBuildOptions);
 } else {
 	build(prodBuildOptions);

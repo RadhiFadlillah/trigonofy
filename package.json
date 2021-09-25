@@ -5,6 +5,7 @@
 	"license": "MIT",
 	"description": "Library to generate colorful triangular background image",
 	"main": "trigonofy.min.js",
+	"type": "module",
 	"keywords": [
 		"lowpoly",
 		"triangle",

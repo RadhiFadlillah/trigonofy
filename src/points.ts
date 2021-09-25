@@ -1,68 +1,79 @@
 import { randomInt } from './utils';
 
-export enum DistributionType {
-	Uniform,
-	Grid,
-	Gaussian,
-	Degenerate,
-}
+export type Point = [number, number];
 
-export function generatePoints(
-	width: number,
-	height: number,
-	cellSize: number,
-	type: DistributionType
-): [number, number][] {
-	switch (type) {
-		case DistributionType.Grid:
-			return gridPoints(width, height, cellSize);
-		default:
-			return uniformPoints(width, height, cellSize);
-	}
-}
-
-function uniformPoints(
-	width: number,
-	height: number,
-	cellSize: number
-): [number, number][] {
-	const nRow = Math.ceil(width / cellSize) * 2;
-	const nColumn = Math.ceil(height / cellSize) * 2;
-	const nPoint = nRow * nColumn;
-
-	const points: [number, number][] = [];
-	for (let i = 0; i < nPoint; i++) {
-		let x = Math.round(Math.random() * (width * 2) - width / 2);
-		let y = Math.round(Math.random() * (height * 2) - height / 2);
-		points.push([x, y]);
-	}
-
-	return points;
-}
-
-function gridPoints(
-	width: number,
-	height: number,
-	cellSize: number
-): [number, number][] {
-	const [minX, maxX] = [-width / 2, width * 1.5];
-	const [minY, maxY] = [-height / 2, height * 1.5];
-	const delta = () => cellSizeDelta(cellSize);
-
-	const points: [number, number][] = [];
-	for (let x = minX; x <= maxX; x += cellSize) {
-		for (let y = minY; y <= maxY; y += cellSize) {
-			points.push([x + delta(), y + delta()]);
+export class Points {
+	static random(width: number, height: number, cellSize?: number): Point[] {
+		let d2 = randomInt(1, 2);
+		switch (d2) {
+			case 1:
+				return this.uniform(width, height, cellSize);
+			case 2:
+			default:
+				return this.grid(width, height, cellSize);
 		}
 	}
 
-	console.log(points);
+	static uniform(width: number, height: number, cellSize?: number): Point[] {
+		if (width < 0) width = 0;
+		if (height < 0) height = 0;
+		if (cellSize == null || cellSize <= 0) {
+			cellSize = randomCellSize(width, height);
+		}
 
-	return points;
+		const nRow = Math.ceil(width / cellSize) * 2;
+		const nColumn = Math.ceil(height / cellSize) * 2;
+		const nPoint = nRow * nColumn;
+
+		const points: [number, number][] = [];
+		for (let i = 0; i < nPoint; i++) {
+			let x = Math.round(Math.random() * (width * 2) - width / 2);
+			let y = Math.round(Math.random() * (height * 2) - height / 2);
+			points.push([x, y]);
+		}
+
+		return points;
+	}
+
+	static grid(
+		width: number,
+		height: number,
+		cellSize?: number,
+		variance?: number
+	): Point[] {
+		if (width < 0) width = 0;
+		if (height < 0) height = 0;
+
+		if (variance < 0) variance = 0;
+		else if (variance > 1) variance = 1;
+		else if (variance == null) variance = Math.random();
+
+		if (cellSize == null || cellSize <= 0) {
+			cellSize = randomCellSize(width, height);
+		}
+
+		const [minX, maxX] = [-width / 2, width * 1.5];
+		const [minY, maxY] = [-height / 2, height * 1.5];
+		const delta = (): number => {
+			let coin = Math.round(Math.random());
+			let delta = Math.round(Math.random() * cellSize * variance);
+			return coin === 1 ? delta : -delta;
+		};
+
+		const points: [number, number][] = [];
+		for (let x = minX; x <= maxX; x += cellSize) {
+			for (let y = minY; y <= maxY; y += cellSize) {
+				points.push([x + delta(), y + delta()]);
+			}
+		}
+
+		return points;
+	}
 }
 
-function cellSizeDelta(cellSize: number): number {
-	let coin = Math.round(Math.random());
-	let delta = Math.round(Math.random() * cellSize * 0.2);
-	return coin === 1 ? delta : -delta;
+function randomCellSize(width: number, height: number): number {
+	const limit = Math.min(width, height);
+	let minSize = Math.min(limit, 10);
+	let maxSize = Math.floor(limit / 5);
+	return randomInt(minSize, maxSize);
 }
