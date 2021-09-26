@@ -26,6 +26,15 @@ export class Pattern {
 		this.palette = opts.palette;
 	}
 
+	renderRandom({
+		lineWidth = 2,
+		gradientAngle = undefined,
+	} = {}): HTMLCanvasElement {
+		const d1 = randomInt(1, 2);
+		const opts = { lineWidth, gradientAngle };
+		return d1 === 1 ? this.renderTriangle(opts) : this.renderVoronoi(opts);
+	}
+
 	renderTriangle({
 		lineWidth = 2,
 		gradientAngle = undefined,
