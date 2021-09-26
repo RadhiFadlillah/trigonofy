@@ -10,7 +10,6 @@ export interface PatternOptions {
 	height?: number;
 	points?: Point[];
 	palette?: string[];
-	gradientAngle?: number;
 }
 
 export class Pattern {
@@ -18,7 +17,6 @@ export class Pattern {
 	height: number;
 	points: Point[];
 	palette: string[];
-	angle: number;
 
 	constructor(opts: PatternOptions = {}) {
 		opts = validateOptions(opts);
@@ -26,12 +24,18 @@ export class Pattern {
 		this.height = opts.height;
 		this.points = opts.points;
 		this.palette = opts.palette;
-		this.angle = opts.gradientAngle;
 	}
 
-	renderTriangle(): HTMLCanvasElement {
+	renderTriangle({
+		lineWidth = 2,
+		gradientAngle = undefined,
+	} = {}): HTMLCanvasElement {
+		// Validate options
+		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
+		gradientAngle = normalizeAngle(gradientAngle);
+
 		// Create canvas
-		const [canvas, ctx] = this._prepareCanvas();
+		const [canvas, ctx] = this._prepareCanvas(lineWidth, gradientAngle);
 
 		// Draw background
 		ctx.fillRect(0, 0, this.width, this.height);
@@ -60,16 +64,23 @@ export class Pattern {
 			// Draw triangle
 			ctx.fillStyle = getColor(ctx, cx, cy);
 			drawPolygon(ctx, points as Point[]);
+			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
-			ctx.stroke();
 		});
 
 		return canvas;
 	}
 
-	renderVoronoi(): HTMLCanvasElement {
+	renderVoronoi({
+		lineWidth = 2,
+		gradientAngle = undefined,
+	} = {}): HTMLCanvasElement {
+		// Validate options
+		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
+		gradientAngle = normalizeAngle(gradientAngle);
+
 		// Create canvas
-		const [canvas, ctx] = this._prepareCanvas();
+		const [canvas, ctx] = this._prepareCanvas(lineWidth, gradientAngle);
 
 		// Draw background
 		ctx.fillRect(0, 0, this.width, this.height);
@@ -92,8 +103,8 @@ export class Pattern {
 			// Draw cell
 			ctx.fillStyle = getColor(ctx, cx, cy);
 			drawPolygon(ctx, points as unknown as Point[]);
+			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
-			ctx.stroke();
 		});
 
 		return canvas;
@@ -101,10 +112,11 @@ export class Pattern {
 
 	_createGradient(
 		ctx: CanvasRenderingContext2D,
+		angle: number,
 		palette?: string[]
 	): CanvasGradient {
 		// Prepare variables
-		let { angle, width, height } = { ...this };
+		let { width, height } = { ...this };
 		if (!paletteValid(palette)) {
 			palette = this.palette;
 		}
@@ -148,7 +160,10 @@ export class Pattern {
 		return gradient;
 	}
 
-	_prepareCanvas(): [HTMLCanvasElement, CanvasRenderingContext2D] {
+	_prepareCanvas(
+		lineWidth: number,
+		angle: number
+	): [HTMLCanvasElement, CanvasRenderingContext2D] {
 		// Create canvas
 		const canvas = document.createElement('canvas');
 		canvas.width = this.width;
@@ -156,7 +171,7 @@ export class Pattern {
 
 		// Create fill gradient
 		const ctx = canvas.getContext('2d');
-		const fillGradient = this._createGradient(ctx);
+		const fillGradient = this._createGradient(ctx, angle);
 
 		// Create stroke gradient
 		const luminance = chroma.average(this.palette, 'lch').luminance();
@@ -165,10 +180,10 @@ export class Pattern {
 			color = luminance >= 0.5 ? color.darken() : color.brighten();
 			return color.hex();
 		});
-		const strokeGradient = this._createGradient(ctx, strokePalette);
+		const strokeGradient = this._createGradient(ctx, angle, strokePalette);
 
 		// Set styling
-		ctx.lineWidth = 1;
+		ctx.lineWidth = lineWidth;
 		ctx.fillStyle = fillGradient;
 		ctx.strokeStyle = strokeGradient;
 
@@ -193,11 +208,6 @@ function validateOptions(opts: PatternOptions = {}): PatternOptions {
 		opts.palette = Palette.random();
 	}
 
-	if (!angleValid(opts.gradientAngle)) {
-		opts.gradientAngle = randomInt(0, 360);
-	}
-
-	opts.gradientAngle = normalizeAngle(opts.gradientAngle);
 	return opts;
 }
 

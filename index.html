@@ -33,7 +33,7 @@
 			points: Points.random(window.innerWidth, window.innerHeight)
 		})
 
-		let canvas = pattern.renderTriangle()
+		let canvas = pattern.renderVoronoi({ lineWidth: 2 })
 		document.body.appendChild(canvas)
 	</script>
 </body>
