@@ -88,7 +88,7 @@ export class Pattern {
 		// Draw voronoi cells
 		const delaunay = Delaunay.from(this.points);
 		const voronoi = delaunay.voronoi([0, 0, this.width, this.height]);
-		[...voronoi.cellPolygons()].forEach((points, i) => {
+		[...voronoi.cellPolygons()].forEach((points) => {
 			// Calculate centroid
 			let [sumX, sumY] = [0, 0];
 			let nVertice = points.length - 1;

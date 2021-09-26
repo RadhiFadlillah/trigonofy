@@ -21,14 +21,18 @@ export class Points {
 			cellSize = randomCellSize(width, height);
 		}
 
-		const nRow = Math.ceil(width / cellSize) * 2;
-		const nColumn = Math.ceil(height / cellSize) * 2;
+		const padding = Math.max(Math.min(width, height) / 2, cellSize);
+		const totalWidth = width + 2 * padding;
+		const totalHeight = height + 2 * padding;
+
+		const nRow = Math.ceil(totalHeight / cellSize);
+		const nColumn = Math.ceil(totalWidth / cellSize);
 		const nPoint = nRow * nColumn;
 
 		const points: [number, number][] = [];
 		for (let i = 0; i < nPoint; i++) {
-			let x = Math.round(Math.random() * (width * 2) - width / 2);
-			let y = Math.round(Math.random() * (height * 2) - height / 2);
+			let x = Math.round(Math.random() * totalWidth - padding);
+			let y = Math.round(Math.random() * totalHeight - padding);
 			points.push([x, y]);
 		}
 
@@ -52,12 +56,13 @@ export class Points {
 			cellSize = randomCellSize(width, height);
 		}
 
-		const [minX, maxX] = [-width / 2, width * 1.5];
-		const [minY, maxY] = [-height / 2, height * 1.5];
+		const padding = Math.max(Math.min(width, height) / 2, cellSize);
+		const [minX, maxX] = [-padding, width + padding];
+		const [minY, maxY] = [-padding, height + padding];
 		const delta = (): number => {
-			let coin = Math.round(Math.random());
+			let d1 = Math.round(Math.random());
 			let delta = Math.round(Math.random() * cellSize * variance);
-			return coin === 1 ? delta : -delta;
+			return d1 === 1 ? delta : -delta;
 		};
 
 		const points: [number, number][] = [];
@@ -73,7 +78,7 @@ export class Points {
 
 function randomCellSize(width: number, height: number): number {
 	const limit = Math.min(width, height);
-	let minSize = Math.min(limit, 20);
+	let minSize = Math.min(limit, 50);
 	let maxSize = Math.floor(limit / 5);
 	return randomInt(minSize, maxSize);
 }
