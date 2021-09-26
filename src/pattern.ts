@@ -82,37 +82,84 @@ export class Pattern {
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = strokeGradient;
 
+		// const delaunay = Delaunay.from(points);
+		// [...delaunay.trianglePolygons()].forEach((points) => {
+		// 	// Check if this triangle visible
+		// 	let visible = points.some((p) => {
+		// 		let [x, y] = [p[0], p[1]];
+		// 		return x >= 0 && x <= width && y >= 0 && y <= height;
+		// 	});
+
+		// 	// Skip invisible triangles
+		// 	if (!visible) return;
+
+		// 	// Calculate centroid
+		// 	let cx = (points[0][0] + points[1][0] + points[2][0]) / 3;
+		// 	if (cx <= 0) cx = 1;
+		// 	else if (cx >= width) cx = width - 1;
+
+		// 	let cy = (points[0][1] + points[1][1] + points[2][1]) / 3;
+		// 	if (cy <= 0) cy = 1;
+		// 	else if (cy >= height) cy = height - 1;
+
+		// 	// Fetch color at centroid
+		// 	ctx.fillStyle = getColor(ctx, cx, cy);
+		// 	ctx.beginPath();
+		// 	ctx.moveTo(points[0][0], points[0][1]);
+		// 	ctx.lineTo(points[1][0], points[1][1]);
+		// 	ctx.lineTo(points[2][0], points[2][1]);
+		// 	ctx.lineTo(points[3][0], points[3][1]);
+		// 	ctx.fill();
+		// 	ctx.stroke();
+		// });
+
 		const delaunay = Delaunay.from(points);
-		[...delaunay.trianglePolygons()].forEach((points, i) => {
-			// Check if this triangle visible
-			let visible = points.some((p) => {
-				let [x, y] = [p[0], p[1]];
-				return x >= 0 && x <= width && y >= 0 && y <= height;
-			});
-
-			// Skip invisible triangles
-			if (!visible) return;
-
+		const voronoi = delaunay.voronoi([0, 0, width, height]);
+		[...voronoi.cellPolygons()].forEach((points, i) => {
 			// Calculate centroid
-			let cx = (points[0][0] + points[1][0] + points[2][0]) / 3;
-			if (cx <= 0) cx = 1;
-			else if (cx >= width) cx = width - 1;
+			let [sumX, sumY] = [0, 0];
+			let nVertice = points.length - 1;
+			for (let i = 0; i < nVertice; i++) {
+				sumX += points[i][0];
+				sumY += points[i][1];
+			}
 
-			let cy = (points[0][1] + points[1][1] + points[2][1]) / 3;
-			if (cy <= 0) cy = 1;
-			else if (cy >= height) cy = height - 1;
+			let cx = sumX / nVertice;
+			let cy = sumY / nVertice;
 
-			// Fetch color at circumcenters
+			// Fetch color at centroid
 			ctx.fillStyle = getColor(ctx, cx, cy);
 			ctx.beginPath();
 			ctx.moveTo(points[0][0], points[0][1]);
-			ctx.lineTo(points[1][0], points[1][1]);
-			ctx.lineTo(points[2][0], points[2][1]);
-			ctx.lineTo(points[3][0], points[3][1]);
+			for (let i = 1; i < points.length; i++) {
+				ctx.lineTo(points[i][0], points[i][1]);
+			}
 			ctx.fill();
 			ctx.stroke();
 		});
 	}
+
+	// 	[...delaunay.trianglePolygons()].forEach((points, i) => {
+	// 		// Calculate centroid
+	// 		let cx = (points[0][0] + points[1][0] + points[2][0]) / 3;
+	// 		if (cx <= 0) cx = 1;
+	// 		else if (cx >= width) cx = width - 1;
+
+	// 		let cy = (points[0][1] + points[1][1] + points[2][1]) / 3;
+	// 		if (cy <= 0) cy = 1;
+	// 		else if (cy >= height) cy = height - 1;
+
+	// 		// Fetch color at circumcenters
+	// 		ctx.fillStyle = getColor(ctx, cx, cy);
+	// 		ctx.beginPath();
+	// 		ctx.moveTo(points[0][0], points[0][1]);
+	// 		ctx.lineTo(points[1][0], points[1][1]);
+	// 		ctx.lineTo(points[2][0], points[2][1]);
+	// 		ctx.lineTo(points[3][0], points[3][1]);
+	// 		ctx.fill();
+	// 		ctx.stroke();
+	// 	});
+	// }
 }
 
 function validatePoints(points?: any): boolean {
