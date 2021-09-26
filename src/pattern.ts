@@ -121,13 +121,10 @@ export class Pattern {
 			palette = this.palette;
 		}
 
-		// Normalize angle
-		if (angle > 180) angle -= 180;
-
 		// Calculate gradient endpoints
 		let [x0, y0] = [width / 2, 0];
 		let [x1, y1] = [width / 2, height];
-		if (angle !== 90) {
+		if (Math.abs(angle) !== 90) {
 			// Calculate slope
 			let m = Math.tan((angle * Math.PI) / 180);
 
