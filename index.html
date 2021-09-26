@@ -26,12 +26,15 @@
 	<script type="module">
 		import Trigonofy, { Points, Palette } from '/trigonofy.js'
 
-		Trigonofy({
+		let pattern = Trigonofy({
 			width: window.innerWidth,
 			height: window.innerHeight,
 			palette: Palette.colorbrewer(),
-			points: Points.random(window.innerWidth, window.innerHeight, window.innerWidth / 20)
+			points: Points.random(window.innerWidth, window.innerHeight)
 		})
+
+		let canvas = pattern.renderTriangle()
+		document.body.appendChild(canvas)
 	</script>
 </body>
 
