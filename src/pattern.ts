@@ -3,6 +3,7 @@ import { Points } from './points';
 import { Palette } from './palette';
 import { Delaunay, Voronoi } from 'd3-delaunay';
 import type { Point } from './points';
+import { randomInt } from './utils';
 
 export interface PatternOptions {
 	width?: number;
@@ -41,32 +42,76 @@ export class Pattern {
 			gradientAngle = Math.round(Math.random() * 360);
 		}
 
-		// Generate pattern
-		const delaunay = Delaunay.from(points);
-		const voronoi = delaunay.voronoi([0, 0, width, height]);
-
 		// Create canvas
 		const canvas = document.createElement('canvas');
 		canvas.width = this.width;
 		canvas.height = this.height;
 		document.body.appendChild(canvas);
 
-		// Create gradient
+		// Create fill gradient
 		const ctx = canvas.getContext('2d');
-		ctx.lineWidth = 2;
+		const fillGradient = createGradient(
+			ctx,
+			width,
+			height,
+			palette,
+			gradientAngle
+		);
 
-		const g1 = createGradient(ctx, width, height, palette, gradientAngle);
-		const g2 = createGradient(ctx, width, height, palette, gradientAngle + 90);
+		// Create border gradient
+		const paletteLuminance = chroma.average(palette, 'lch').luminance();
+		const strokePalette = palette.map((hex) => {
+			let color = chroma(hex);
+			if (paletteLuminance >= 0.5) color = color.darken();
+			else color = color.brighten();
+			return color.hex();
+		});
+		const strokeGradient = createGradient(
+			ctx,
+			width,
+			height,
+			strokePalette,
+			gradientAngle
+		);
 
-		ctx.beginPath();
-		ctx.strokeStyle = g1;
-		delaunay.render(ctx);
-		ctx.stroke();
+		// Draw background
+		ctx.fillStyle = fillGradient;
+		ctx.fillRect(0, 0, width, height);
 
-		ctx.beginPath();
-		ctx.strokeStyle = g2;
-		voronoi.render(ctx);
-		ctx.stroke();
+		// Draw delaunay triangles
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = strokeGradient;
+
+		const delaunay = Delaunay.from(points);
+		[...delaunay.trianglePolygons()].forEach((points, i) => {
+			// Check if this triangle visible
+			let visible = points.some((p) => {
+				let [x, y] = [p[0], p[1]];
+				return x >= 0 && x <= width && y >= 0 && y <= height;
+			});
+
+			// Skip invisible triangles
+			if (!visible) return;
+
+			// Calculate centroid
+			let cx = (points[0][0] + points[1][0] + points[2][0]) / 3;
+			if (cx <= 0) cx = 1;
+			else if (cx >= width) cx = width - 1;
+
+			let cy = (points[0][1] + points[1][1] + points[2][1]) / 3;
+			if (cy <= 0) cy = 1;
+			else if (cy >= height) cy = height - 1;
+
+			// Fetch color at circumcenters
+			ctx.fillStyle = getColor(ctx, cx, cy);
+			ctx.beginPath();
+			ctx.moveTo(points[0][0], points[0][1]);
+			ctx.lineTo(points[1][0], points[1][1]);
+			ctx.lineTo(points[2][0], points[2][1]);
+			ctx.lineTo(points[3][0], points[3][1]);
+			ctx.fill();
+			ctx.stroke();
+		});
 	}
 }
 
@@ -154,4 +199,10 @@ function normalizeAngle(angle: number): number {
 	} else {
 		return angle;
 	}
+}
+
+function getColor(ctx: CanvasRenderingContext2D, x: number, y: number): string {
+	const pixel = ctx.getImageData(x, y, 1, 1).data;
+	const color = chroma.rgb(pixel[0], pixel[1], pixel[2]);
+	return color.hex();
 }

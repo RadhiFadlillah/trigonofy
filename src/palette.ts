@@ -28,9 +28,8 @@ export class Palette {
 
 		const sources = [base];
 		const paletteSize = randomInt(4, 10);
-		const nSources = randomInt(2, paletteSize / 2);
-		for (let i = 1; i < nSources; i++) {
-			sources.push(chroma.random());
+		for (let i = 1; i < 4; i++) {
+			sources.push(relativeRandom(sources[i - 1]));
 		}
 
 		return chroma.scale(sources).mode('lch').colors(paletteSize);
@@ -122,4 +121,24 @@ function parseColor(color?: string): chroma.Color {
 	} else {
 		return chroma.random();
 	}
+}
+
+function relativeRandom(base?: chroma.Color): chroma.Color {
+	if (base == null) {
+		return chroma.random();
+	}
+
+	let d3 = randomInt(1, 3);
+	let [h, s, l] = base.hsl();
+	switch (d3) {
+		case 1:
+			h = randomInt(1, 360);
+		case 2:
+			s = Math.random();
+		case 3:
+		default:
+			l = Math.random();
+	}
+
+	return chroma.hsl(h, s, l);
 }

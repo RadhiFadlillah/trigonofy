@@ -24,11 +24,13 @@
 
 <body>
 	<script type="module">
-		import Trigonofy from '/trigonofy.js'
+		import Trigonofy, { Points, Palette } from '/trigonofy.js'
 
 		Trigonofy({
 			width: window.innerWidth,
 			height: window.innerHeight,
+			palette: Palette.colorbrewer(),
+			points: Points.random(window.innerWidth, window.innerHeight, window.innerWidth / 20)
 		})
 	</script>
 </body>
