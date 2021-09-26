@@ -43,7 +43,6 @@ const prodBuildOptions = {
 if (serveMode) {
 	serve(serveOptions, buildOptions);
 } else if (devMode) {
-	build(devUnbundledBuildOptions);
 	build(devBuildOptions);
 } else {
 	build(prodBuildOptions);
