@@ -26,25 +26,26 @@ export class Pattern {
 		this.palette = opts.palette;
 	}
 
-	renderRandom({
-		lineWidth = 2,
-		gradientAngle = undefined,
-	} = {}): HTMLCanvasElement {
-		const d1 = randomInt(1, 2);
+	renderRandom(
+		ctx: CanvasRenderingContext2D,
+		{ lineWidth = 2, gradientAngle = undefined } = {}
+	) {
 		const opts = { lineWidth, gradientAngle };
-		return d1 === 1 ? this.renderTriangle(opts) : this.renderVoronoi(opts);
+		return randomInt(1, 2) === 1
+			? this.renderTriangle(ctx, opts)
+			: this.renderVoronoi(ctx, opts);
 	}
 
-	renderTriangle({
-		lineWidth = 2,
-		gradientAngle = undefined,
-	} = {}): HTMLCanvasElement {
+	renderTriangle(
+		ctx: CanvasRenderingContext2D,
+		{ lineWidth = 2, gradientAngle = undefined } = {}
+	) {
 		// Validate options
 		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
 		gradientAngle = normalizeAngle(gradientAngle);
 
-		// Create canvas
-		const [canvas, ctx] = this._prepareCanvas(lineWidth, gradientAngle);
+		// Initiate context
+		this._initiateContext(ctx, lineWidth, gradientAngle);
 
 		// Draw background
 		ctx.fillRect(0, 0, this.width, this.height);
@@ -76,20 +77,18 @@ export class Pattern {
 			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
 		});
-
-		return canvas;
 	}
 
-	renderVoronoi({
-		lineWidth = 2,
-		gradientAngle = undefined,
-	} = {}): HTMLCanvasElement {
+	renderVoronoi(
+		ctx: CanvasRenderingContext2D,
+		{ lineWidth = 2, gradientAngle = undefined } = {}
+	) {
 		// Validate options
 		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
 		gradientAngle = normalizeAngle(gradientAngle);
 
-		// Create canvas
-		const [canvas, ctx] = this._prepareCanvas(lineWidth, gradientAngle);
+		// Initiate context
+		this._initiateContext(ctx, lineWidth, gradientAngle);
 
 		// Draw background
 		ctx.fillRect(0, 0, this.width, this.height);
@@ -115,8 +114,29 @@ export class Pattern {
 			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
 		});
+	}
 
-		return canvas;
+	_initiateContext(
+		ctx: CanvasRenderingContext2D,
+		lineWidth: number,
+		angle: number
+	) {
+		// Create fill gradient
+		const fillGradient = this._createGradient(ctx, angle);
+
+		// Create stroke gradient
+		const luminance = chroma.average(this.palette, 'lch').luminance();
+		const strokePalette = this.palette.map((hex) => {
+			let color = chroma(hex);
+			color = luminance >= 0.5 ? color.darken() : color.brighten();
+			return color.hex();
+		});
+		const strokeGradient = this._createGradient(ctx, angle, strokePalette);
+
+		// Set styling
+		ctx.lineWidth = lineWidth;
+		ctx.fillStyle = fillGradient;
+		ctx.strokeStyle = strokeGradient;
 	}
 
 	_createGradient(
@@ -164,36 +184,6 @@ export class Pattern {
 		});
 
 		return gradient;
-	}
-
-	_prepareCanvas(
-		lineWidth: number,
-		angle: number
-	): [HTMLCanvasElement, CanvasRenderingContext2D] {
-		// Create canvas
-		const canvas = document.createElement('canvas');
-		canvas.width = this.width;
-		canvas.height = this.height;
-
-		// Create fill gradient
-		const ctx = canvas.getContext('2d');
-		const fillGradient = this._createGradient(ctx, angle);
-
-		// Create stroke gradient
-		const luminance = chroma.average(this.palette, 'lch').luminance();
-		const strokePalette = this.palette.map((hex) => {
-			let color = chroma(hex);
-			color = luminance >= 0.5 ? color.darken() : color.brighten();
-			return color.hex();
-		});
-		const strokeGradient = this._createGradient(ctx, angle, strokePalette);
-
-		// Set styling
-		ctx.lineWidth = lineWidth;
-		ctx.fillStyle = fillGradient;
-		ctx.strokeStyle = strokeGradient;
-
-		return [canvas, ctx];
 	}
 }
 
