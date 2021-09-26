@@ -26,14 +26,7 @@ const devBuildOptions = {
 	watch: serveMode !== true,
 };
 
-const devUnbundledBuildOptions = {
-	...devBuildOptions,
-	sourcemap: false,
-	outfile: 'trigonofy-unbundled.js',
-	external: ['chroma-js', 'd3-delaunay'],
-};
-
-const bundleProdBuildOptions = {
+const prodBundleBuildOptions = {
 	...buildOptions,
 	minify: true,
 	sourcemap: false,
@@ -41,7 +34,7 @@ const bundleProdBuildOptions = {
 };
 
 const prodBuildOptions = {
-	...bundleProdBuildOptions,
+	...prodBundleBuildOptions,
 	outfile: 'trigonofy.min.js',
 	external: ['chroma-js', 'd3-delaunay'],
 };
