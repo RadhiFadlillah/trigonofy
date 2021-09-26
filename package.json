@@ -14,14 +14,17 @@
 	"devDependencies": {
 		"@types/chroma-js": "^2.1.3",
 		"@types/d3-delaunay": "^6.0.0",
-		"esbuild": "^0.13.2"
+		"@types/node": "^16.10.1",
+		"esbuild": "^0.13.2",
+		"typescript": "^4.4.3"
 	},
 	"dependencies": {
 		"chroma-js": "^2.1.2",
 		"d3-delaunay": "^6.0.2"
 	},
 	"scripts": {
-		"prod": "node build.esbuild.mjs",
+		"ts": "npx tsc ./src/index.ts --declaration --emitDeclarationOnly --esModuleInterop --downlevelIteration --outfile ./trigonofy.d.ts",
+		"prod": "node build.esbuild.mjs && npm run ts",
 		"dev": "node build.esbuild.mjs dev",
 		"serve": "node build.esbuild.mjs serve"
 	}
