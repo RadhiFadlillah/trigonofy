@@ -38,7 +38,7 @@ export class Pattern {
 
 	renderTriangle(
 		ctx: CanvasRenderingContext2D,
-		{ lineWidth = 2, gradientAngle = undefined } = {}
+		{ lineWidth = 1, gradientAngle = undefined } = {}
 	) {
 		// Validate options
 		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
@@ -74,14 +74,20 @@ export class Pattern {
 			// Draw triangle
 			ctx.fillStyle = getColor(ctx, cx, cy);
 			drawPolygon(ctx, points as Point[]);
-			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
 		});
+
+		// Draw triangle border
+		if (lineWidth > 0) {
+			ctx.beginPath();
+			delaunay.render(ctx);
+			ctx.stroke();
+		}
 	}
 
 	renderVoronoi(
 		ctx: CanvasRenderingContext2D,
-		{ lineWidth = 2, gradientAngle = undefined } = {}
+		{ lineWidth = 1, gradientAngle = undefined } = {}
 	) {
 		// Validate options
 		if (!angleValid(gradientAngle)) gradientAngle = randomInt(0, 360);
@@ -111,9 +117,15 @@ export class Pattern {
 			// Draw cell
 			ctx.fillStyle = getColor(ctx, cx, cy);
 			drawPolygon(ctx, points as unknown as Point[]);
-			if (lineWidth > 0) ctx.stroke();
 			ctx.fill();
 		});
+
+		// Draw cell border
+		if (lineWidth > 0) {
+			ctx.beginPath();
+			voronoi.render(ctx);
+			ctx.stroke();
+		}
 	}
 
 	_initiateContext(
