@@ -21,19 +21,41 @@
 </head>
 
 <body>
-	<canvas width="1366" height="768"></canvas>
+	<canvas></canvas>
 
 	<script type="module">
 		import Trigonofy, { Points, Palette } from '/trigonofy.js'
 
-		let canvas = document.querySelector('canvas')
-		let ctx = canvas.getContext('2d')
+		function generateBackground(canvas, width, height) {
+			// Set visible canvas size
+			canvas.style.width = `${width}px`
+			canvas.style.height = `${height}px`
 
-		Trigonofy({
-			width: canvas.width,
-			height: canvas.height,
-			palette: Palette.colorbrewer(),
-		}).renderRandom(ctx)
+			// Resize dimension based on device's dpr
+			let scale = window.devicePixelRatio;
+			width = Math.floor(width * scale)
+			height = Math.floor(height * scale)
+
+			// Prepare canvas
+			let ctx = canvas.getContext('2d');
+			ctx.scale(scale, scale);
+			canvas.height = height
+			canvas.width = width
+
+			// Generate pattern
+			let pattern = Trigonofy({
+				width: width,
+				height: height,
+				palette: Palette.colorbrewer(),
+			})
+
+			// Render pattern
+			let opts = { lineWidth: Math.round(scale) };
+			pattern.renderRandom(ctx, opts);
+		}
+
+		const canvas = document.querySelector('canvas')
+		generateBackground(canvas, window.innerWidth, window.innerHeight)
 	</script>
 </body>
 
