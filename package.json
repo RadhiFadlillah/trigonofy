@@ -6,7 +6,7 @@
 	"description": "Library to generate colorful triangular background image",
 	"main": "trigonofy.min.js",
 	"type": "module",
-	"types": "trigonofy.d.ts",
+	"types": "definitions/index.d.ts",
 	"keywords": [
 		"lowpoly",
 		"triangle",
@@ -24,7 +24,7 @@
 		"d3-delaunay": "^6.0.2"
 	},
 	"scripts": {
-		"ts": "npx tsc ./src/index.ts --declaration --emitDeclarationOnly --esModuleInterop --downlevelIteration --outfile ./trigonofy.d.ts",
+		"ts": "npx tsc ./src/index.ts --declaration --emitDeclarationOnly --esModuleInterop --downlevelIteration --allowSyntheticDefaultImports --outdir ./definitions",
 		"prod": "node build.esbuild.mjs && npm run ts",
 		"dev": "node build.esbuild.mjs dev",
 		"serve": "node build.esbuild.mjs serve"
