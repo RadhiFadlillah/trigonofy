@@ -18,7 +18,7 @@ const buildOptions = {
 	format: 'esm',
 	globalName: 'Trigonofy',
 	outfile: 'trigonofy.js',
-	entryPoints: ['./src/index.ts'],
+	entryPoints: ['./src/_index.ts'],
 };
 
 const devBuildOptions = {
