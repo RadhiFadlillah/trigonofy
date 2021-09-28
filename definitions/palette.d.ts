@@ -7,4 +7,6 @@ export declare class Palette {
     static triadic(baseColor?: string): string[];
     static tetradic(baseColor?: string): string[];
     static colorbrewer(key?: string): string[];
+    static isValid(colors?: string[]): boolean;
+    static luminance(colors: string[]): number;
 }

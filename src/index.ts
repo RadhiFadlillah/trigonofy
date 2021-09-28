@@ -1,10 +1,4 @@
-// Imports
-import { Points } from './points';
 import { Palette } from './palette';
-import { Pattern } from './pattern';
-import type { PatternOptions } from './pattern';
+import { Triangle, Voronoi } from './triangle';
 
-export { Points, Palette, Pattern };
-export default function (opts?: PatternOptions): Pattern {
-	return new Pattern(opts);
-}
+export { Palette, Triangle, Voronoi };

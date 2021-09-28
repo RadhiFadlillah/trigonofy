@@ -113,6 +113,19 @@ export class Palette {
 			return chroma.brewer[cbKeys[idx]];
 		}
 	}
+
+	static isValid(colors?: string[]): boolean {
+		if (!Array.isArray(colors)) return false;
+		if (colors.length < 2) return false;
+
+		return colors.every((color) => {
+			return typeof color === 'string' && chroma.valid(color);
+		});
+	}
+
+	static luminance(colors: string[]): number {
+		return chroma.average(colors, 'lch').luminance();
+	}
 }
 
 function parseColor(color?: string): chroma.Color {
