@@ -24,7 +24,7 @@
 		"d3-delaunay": "^6.0.2"
 	},
 	"scripts": {
-		"ts": "npx tsc ./src/index.ts --declaration --emitDeclarationOnly --esModuleInterop --downlevelIteration --allowSyntheticDefaultImports --outdir ./definitions",
+		"ts": "npx tsc ./src/_index.ts --declaration --emitDeclarationOnly --esModuleInterop --downlevelIteration --allowSyntheticDefaultImports --outdir ./definitions",
 		"prod": "node build.esbuild.mjs && npm run ts",
 		"dev": "node build.esbuild.mjs dev",
 		"serve": "node build.esbuild.mjs serve"

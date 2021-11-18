@@ -32,7 +32,11 @@ export class Palette {
 			sources.push(relativeRandom(sources[i - 1]));
 		}
 
-		return chroma.scale(sources).mode('lch').colors(paletteSize);
+		return chroma
+			.scale(sources)
+			.mode('lch')
+			.correctLightness()
+			.colors(paletteSize);
 	}
 
 	static complementary(baseColor?: string): string[] {
@@ -42,7 +46,11 @@ export class Palette {
 		const accent = chroma.hsl(h - 180, s, l);
 
 		const paletteSize = randomInt(4, 10);
-		return chroma.scale([base, accent]).mode('lch').colors(paletteSize);
+		return chroma
+			.scale([base, accent])
+			.mode('lch')
+			.correctLightness()
+			.colors(paletteSize);
 	}
 
 	static monochromatic(baseColor?: string): string[] {
@@ -71,6 +79,7 @@ export class Palette {
 		return chroma
 			.scale([base, accent1, accent2])
 			.mode('lch')
+			.correctLightness()
 			.colors(paletteSize);
 	}
 
@@ -85,6 +94,7 @@ export class Palette {
 		return chroma
 			.scale([base, accent1, accent2])
 			.mode('lch')
+			.correctLightness()
 			.colors(paletteSize);
 	}
 
@@ -100,6 +110,7 @@ export class Palette {
 		return chroma
 			.scale([base, accent1, accent2, accent3])
 			.mode('lch')
+			.correctLightness()
 			.colors(paletteSize);
 	}
 
